@@ -1,0 +1,269 @@
+﻿<UserControl x:Class="NetworkService.Views.NetworkEntitiesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource PrimaryBackground}">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="Network Entities"
+                   FontSize="22" FontWeight="Bold"
+                   Foreground="{StaticResource AccentCyan}"
+                   Margin="0,0,0,10"/>
+
+        <Border Grid.Row="1"
+                Background="{StaticResource SecondaryBackground}"
+                CornerRadius="6" Padding="12"
+                BorderBrush="{StaticResource BorderColor}"
+                BorderThickness="1" Margin="0,0,0,8">
+            <StackPanel>
+                <TextBlock Text="Pretraga"
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource AccentCyan}"
+                           Margin="0,0,0,8"/>
+
+                <Grid Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <RadioButton Grid.Column="0"
+                                 Content="Po nazivu"
+                                 IsChecked="{Binding SearchByName, Mode=TwoWay}"
+                                 VerticalAlignment="Center"
+                                 Margin="0,0,10,0"/>
+                    <RadioButton Grid.Column="1"
+                                 Content="Po tipu"
+                                 IsChecked="{Binding SearchByType, Mode=TwoWay}"
+                                 VerticalAlignment="Center"
+                                 Margin="0,0,10,0"/>
+                    <TextBox Grid.Column="2"
+                             Text="{Binding SearchText, Mode=TwoWay,
+                                    UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="Pretraga se vrši u realnom vremenu"/>
+                    <Button Grid.Column="3"
+                            Content="Očisti"
+                            Command="{Binding ClearSearchCommand}"
+                            Margin="8,0,4,0"/>
+                    <Button Grid.Column="4"
+                            Content="Sačuvaj pretragu"
+                            Command="{Binding SaveSearchCommand}"/>
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0"
+                               Text="Sačuvane pretrage:"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource TextSecondary}"
+                               Margin="0,0,8,0"/>
+                    <ComboBox Grid.Row="0" Grid.Column="1"
+                              Width="250"
+                              ItemsSource="{Binding SavedSearches}"
+                              SelectedItem="{Binding SelectedSavedSearch,
+                                             Mode=TwoWay}"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="1"
+                               Text="{Binding SavedSearchMessage}"
+                               Foreground="{StaticResource AccentCyan}"
+                               FontSize="11"
+                               Margin="0,3,0,0"/>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <ListView Grid.Row="2"
+                  ItemsSource="{Binding FilteredEntities}"
+                  SelectedItem="{Binding SelectedEntity, Mode=TwoWay}"
+                  Margin="0,0,0,8">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Tip" Width="55">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding ImagePath}"
+                                       Width="30" Height="30"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="ID" Width="45"
+                                    DisplayMemberBinding="{Binding Id}"/>
+                    <GridViewColumn Header="Naziv" Width="250"
+                                    DisplayMemberBinding="{Binding Name}"/>
+                    <GridViewColumn Header="Tip" Width="130"
+                                    DisplayMemberBinding="{Binding EntityType.Name}"/>
+                    <GridViewColumn Header="Trenutna vrijednost" Width="160">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Width="10" Height="10"
+                                             Margin="0,0,6,0">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Fill"
+                                                        Value="{StaticResource InvalidRed}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger
+                                                        Binding="{Binding IsValueValid}"
+                                                        Value="True">
+                                                        <Setter Property="Fill"
+                                                                Value="{StaticResource ValidGreen}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+                                    <TextBlock Text="{Binding CurrentValueDisplay}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <Border Grid.Row="3"
+                Background="{StaticResource SecondaryBackground}"
+                CornerRadius="6" 
+                Padding="12,12,12,8"
+                BorderBrush="{StaticResource BorderColor}"
+                BorderThickness="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           Text="Dodaj entitet:"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource TextSecondary}"
+                           Margin="0,0,8,13"/>
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <ComboBox Width="180"
+                              Margin="0,0,0,2"
+                              Height="30"
+                              ItemsSource="{Binding EntityTypes}"
+                              SelectedItem="{Binding SelectedType, Mode=TwoWay}"
+                              DisplayMemberPath="Name"/>
+                    <TextBlock Text="{Binding TypeError}"
+                               Foreground="{StaticResource InvalidRed}"
+                               FontSize="11"/>
+                </StackPanel>
+
+                <Button Grid.Column="2"
+                        Content="+ Dodaj"
+                        Margin="8,0,0,17"
+                        Height="30"
+                        VerticalAlignment="Center"
+                        Command="{Binding AddCommand}"/>
+
+                <Button Grid.Column="5"
+                        Style="{StaticResource DeleteButtonStyle}"
+                        Command="{Binding DeleteCommand}"
+                        VerticalAlignment="Center"
+                        Margin="0,0,0,17"
+                        Height="30"
+                        ToolTip="Selektujte entitet pa kliknite za brisanje">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🗑 " FontSize="14"/>
+                        <TextBlock Text="Obriši selektovano"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
+
+        <Grid Grid.RowSpan="4"
+              Visibility="{Binding DeleteDialogVisible,
+                           Converter={StaticResource BoolToVisibilityConverter}}"
+              Background="#BB000000"
+              Panel.ZIndex="10">
+            <Border HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="{StaticResource SecondaryBackground}"
+                    BorderBrush="{StaticResource BorderColor}"
+                    BorderThickness="1" CornerRadius="8"
+                    Padding="24" MinWidth="340">
+                <StackPanel>
+                    <TextBlock Text="Potvrda brisanja"
+                               FontSize="16" FontWeight="Bold"
+                               Foreground="{StaticResource AccentCyan}"
+                               Margin="0,0,0,12"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                        <TextBlock Text="⚠ " FontSize="20"
+                                   Foreground="{StaticResource InvalidRed}"/>
+                        <TextBlock Text="{Binding DeleteConfirmMessage}"
+                                   TextWrapping="Wrap" MaxWidth="280"/>
+                    </StackPanel>
+                    <TextBlock Text="Ova akcija se ne može poništiti."
+                               Foreground="{StaticResource TextSecondary}"
+                               FontSize="12" Margin="0,4,0,16"/>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right">
+                        <Button Content="Odustani"
+                                Background="{StaticResource BorderColor}"
+                                Margin="0,0,8,0"
+                                Command="{Binding CancelDeleteCommand}"/>
+                        <Button Content="Obriši"
+                                Style="{StaticResource DeleteButtonStyle}"
+                                Command="{Binding ConfirmDeleteCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="2"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Stretch"
+                Margin="0,0,0,8"
+                CornerRadius="6" Padding="14,10"
+                Panel.ZIndex="5"
+                Visibility="{Binding ToastVisible,
+                             Converter={StaticResource BoolToVisibilityConverter}}">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ToastIsSuccess}"
+                                     Value="True">
+                            <Setter Property="Background"
+                                    Value="{StaticResource ToastSuccess}"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ToastIsSuccess}"
+                                     Value="False">
+                            <Setter Property="Background"
+                                    Value="{StaticResource ToastError}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <TextBlock Text="{Binding ToastMessage}"
+                       Foreground="White"
+                       FontWeight="SemiBold"
+                       FontSize="13"/>
+        </Border>
+    </Grid>
+</UserControl>

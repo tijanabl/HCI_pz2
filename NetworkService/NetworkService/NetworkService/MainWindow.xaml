@@ -1,12 +1,79 @@
 ﻿<Window x:Class="NetworkService.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:NetworkService"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        xmlns:vm="clr-namespace:NetworkService.ViewModel"
+        xmlns:views="clr-namespace:NetworkService.Views"
+        Width="1200" Height="750"
+        MinWidth="1000" MinHeight="600"
+        Background="{StaticResource PrimaryBackground}">
+
+    <Window.DataContext>
+        <vm:MainWindowViewModel/>
+    </Window.DataContext>
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:NetworkEntitiesViewModel}">
+            <views:NetworkEntitiesView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MeasurementGraphViewModel}">
+            <views:MeasurementGraphView DataContext="{Binding}"/>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Key="D1" Modifiers="Ctrl"
+                    Command="{Binding NavCommand}"
+                    CommandParameter="entities"/>
+        <KeyBinding Key="D2" Modifiers="Ctrl"
+                    Command="{Binding NavCommand}"
+                    CommandParameter="graph"/>
+    </Window.InputBindings>
+
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0"
+                Background="{StaticResource SecondaryBackground}"
+                BorderBrush="{StaticResource BorderColor}"
+                BorderThickness="0,0,0,1">
+            <Grid Margin="15,0">
+                <TextBlock Text="Network Service"
+                           FontSize="20" FontWeight="Bold"
+                           Foreground="{StaticResource AccentCyan}"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Left"/>
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center">
+                    <Button Content="Entiteti  [Ctrl+1]"
+                            Command="{Binding NavCommand}"
+                            CommandParameter="entities"
+                            Margin="5,0"/>
+                    <Button Content="Grafikon  [Ctrl+2]"
+                            Command="{Binding NavCommand}"
+                            CommandParameter="graph"
+                            Margin="5,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="480"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0"
+                    BorderBrush="{StaticResource BorderColor}"
+                    BorderThickness="0,0,1,0">
+                <views:NetworkDisplayView DataContext="{Binding Source={x:Static vm:MainWindowViewModel.DisplayVM}}"/>
+            </Border>
+
+            <ContentControl Grid.Column="1"
+                            Content="{Binding CurrentViewModel}"/>
+        </Grid>
     </Grid>
 </Window>
